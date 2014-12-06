@@ -12,6 +12,8 @@ public class DamageController : MonoBehaviour
     /// </summary>
     public int ShieldStrength = 1000;
 
+    public bool IsPlayer = false;
+
     private int _shieldStrength = 0;
 
     /// <summary>
@@ -22,12 +24,31 @@ public class DamageController : MonoBehaviour
     private float shieldTimer;
     private bool shieldTimerActive;
 
+    AudioClip _shieldSound;
+    AudioClip _hullSound;
+
+    AudioClip _takingDamageSound;
+    AudioClip _shieldDownSound;
+    AudioClip _hullBreachedSound;
+
+
     void Start()
     {
         shieldTimer = 0;
         shieldTimerActive = false;
 
         _shieldStrength = ShieldStrength;
+
+        LoadSounds();
+    }
+
+    void LoadSounds()
+    {
+        _shieldSound = Resources.Load<AudioClip>("Sounds/Sounds/shield-noise");
+        _hullSound = Resources.Load<AudioClip>("Sounds/Sounds/hull-noise");
+        _takingDamageSound = Resources.Load<AudioClip>("Sounds/Voices/taking-damage");
+        _shieldDownSound = Resources.Load<AudioClip>("Sounds/Voices/shield-down");
+        _hullBreachedSound = Resources.Load<AudioClip>("Sounds/Voices/hull-breached");
     }
 
     void Update()
@@ -44,18 +65,19 @@ public class DamageController : MonoBehaviour
         }
     }
 
-    internal void Hit(GunController controller)
+    internal void Hit(GunController controller, Vector3 hitPosition)
     {
         int laserStrength = controller.Strength;
 
         if (_shieldStrength > 0)
         {
-            //Shield zap noise
-            //If this is the player, play sound "taking-damage.wav"
-
+            AudioSource.PlayClipAtPoint(_shieldSound, Camera.main.transform.position);
             if (_shieldStrength <= laserStrength)
             {
-                //If this is the player, play sound "shields-down.wav"
+                if (IsPlayer)
+                {
+                    AudioSource.PlayClipAtPoint(_shieldDownSound, Camera.main.transform.position);
+                }
                 _shieldStrength = 0;
             }
             else
@@ -66,6 +88,11 @@ public class DamageController : MonoBehaviour
             if(!shieldTimerActive)
             {
                 shieldTimer = ShieldRegenTime;
+                shieldTimerActive = true;
+                if (IsPlayer)
+                {
+                    AudioSource.PlayClipAtPoint(_takingDamageSound, Camera.main.transform.position);
+                }
             }
 
             laserStrength -= _shieldStrength;
@@ -73,7 +100,7 @@ public class DamageController : MonoBehaviour
 
         if (laserStrength > 0 && HullStrength > 0)
         {
-            //Hull hit noise
+            AudioSource.PlayClipAtPoint(_hullSound, Camera.main.transform.position);
             laserStrength -= HullStrength;
 
             if (HullStrength <= laserStrength)
@@ -83,7 +110,10 @@ public class DamageController : MonoBehaviour
             }
             else if (HullStrength <= 100)
             {
-                //If this is the player, play sound "hull-breached.wav"
+                if (IsPlayer)
+                {
+                    AudioSource.PlayClipAtPoint(_hullBreachedSound, Camera.main.transform.position);
+                }
             }
         }
 

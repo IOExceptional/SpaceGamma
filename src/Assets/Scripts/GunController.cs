@@ -9,12 +9,21 @@ public class GunController : MonoBehaviour
 
     public int Strength = 50;
 
+    private AudioClip _laserSound;
+
     // Use this for initialization
     void Start()
     {
         lineRenderer = gameObject.GetComponent<LineRenderer>();
 
         lineRenderer.enabled = false;
+
+        LoadSounds();
+    }
+
+    void LoadSounds()
+    {
+        _laserSound = Resources.Load<AudioClip>("Sounds/Sounds/laser-gun");
     }
 
     // Update is called once per frame
@@ -49,7 +58,7 @@ public class GunController : MonoBehaviour
 
         Vector3 endPoint = ray.GetPoint(LaserLength);
 
-        if (Physics.Raycast(ray, out hit, 100) && hit.collider.collider.isTrigger)
+        if (Physics.Raycast(ray, out hit, 100) && !hit.collider.collider.isTrigger)
         {
             endPoint = hit.point;
         }
@@ -60,12 +69,14 @@ public class GunController : MonoBehaviour
 
             if (controller != null)
             {
-                controller.Hit(this);
+                controller.Hit(this, hit.collider.transform.position);
             }
         }
 
         lineRenderer.SetPosition(0, ray.origin);
         lineRenderer.SetPosition(1, endPoint);
+
+        AudioSource.PlayClipAtPoint(_laserSound, ray.origin);
     }
 }
 
