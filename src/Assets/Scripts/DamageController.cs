@@ -30,6 +30,8 @@ public class DamageController : MonoBehaviour
     AudioClip _takingDamageSound;
     AudioClip _shieldDownSound;
     AudioClip _hullBreachedSound;
+    AudioClip _shieldsRecharged;
+    AudioClip _enemyShieldsDown;
 
 
     void Start()
@@ -46,22 +48,40 @@ public class DamageController : MonoBehaviour
     {
         _shieldSound = Resources.Load<AudioClip>("Sounds/Sounds/shield-noise");
         _hullSound = Resources.Load<AudioClip>("Sounds/Sounds/hull-noise");
-        _takingDamageSound = Resources.Load<AudioClip>("Sounds/Voices/taking-damage");
-        _shieldDownSound = Resources.Load<AudioClip>("Sounds/Voices/shields-down");
-        _hullBreachedSound = Resources.Load<AudioClip>("Sounds/Voices/hull-breached");
+        _enemyShieldsDown = Resources.Load<AudioClip>("Sounds/Voices/enemy-shields-down");
+        _enemyShieldsRecharged = Resources.Load<AudioClip>("Sounds/Voices/enemy-shields-recharged");
+        if (IsPlayer)
+        {
+            _takingDamageSound = Resources.Load<AudioClip>("Sounds/Voices/taking-damage");
+            _shieldDownSound = Resources.Load<AudioClip>("Sounds/Voices/shields-down");
+            _hullBreachedSound = Resources.Load<AudioClip>("Sounds/Voices/hull-breached");
+            _shieldsRecharged = Resources.Load<AudioClip>("Sounds/Voices/shields-recharged");
+        }
     }
 
     void Update()
     {
-        if(shieldTimerActive && shieldTimer >= 0)
+        if (shieldTimerActive && shieldTimer >= 0)
         {
             shieldTimer -= Time.deltaTime;
         }
 
-        if(shieldTimer <= 0)
+        if (shieldTimer <= 0 && shieldTimerActive)
         {
             shieldTimerActive = false;
             _shieldStrength = ShieldStrength;
+
+            Debug.Log(string.Format("Shields recharged"));
+
+            if (IsPlayer && _shieldsRecharged.isReadyToPlay)
+            {
+                AudioSource.PlayClipAtPoint(_shieldsRecharged, Camera.main.transform.position);
+            }
+            if(!IsPlayer && _enemyShieldsRecharged.isReadyToPlay)
+            {
+                AudioSource.PlayClipAtPoint(_enemyShieldsRecharged, Camera.main.transform.position);
+            }
+
         }
     }
 
@@ -69,15 +89,54 @@ public class DamageController : MonoBehaviour
     {
         int laserStrength = controller.Strength;
 
-        if (_shieldStrength > 0)
+        Debug.Log(string.Format("LS: {0}, SS: {1}, HS: {2}", laserStrength, _shieldStrength, HullStrength));
+
+        HandleShield(hitPosition, ref laserStrength);
+
+        HandleHull(hitPosition, ref laserStrength);
+
+        DeathCheck();
+    }
+
+    private void HandleHull(Vector3 hitPosition, ref int laserStrength)
+    {
+        if (laserStrength > 0 && HullStrength > 0)
         {
-            AudioSource.PlayClipAtPoint(_shieldSound, Camera.main.transform.position);
+            if (_hullSound.isReadyToPlay)
+            {
+                AudioSource.PlayClipAtPoint(_hullSound, hitPosition);
+            }
+            
+            HullStrength -= laserStrength;
+            
+            if (HullStrength <= 100)
+            {
+                if (IsPlayer && _hullBreachedSound.isReadyToPlay)
+                {
+                    AudioSource.PlayClipAtPoint(_hullBreachedSound, Camera.main.transform.position);
+                }
+            }
+        }
+    }
+
+    private void HandleShield(Vector3 hitPosition, ref int laserStrength)
+    {
+        if (!shieldTimerActive && _shieldStrength > 0)
+        {
+            int laserDiff = Mathf.Clamp(laserStrength - _shieldStrength, 0, int.MaxValue);
+            
+            if (_shieldSound.isReadyToPlay)
+            {
+                AudioSource.PlayClipAtPoint(_shieldSound, hitPosition);
+            }
+
             if (_shieldStrength <= laserStrength)
             {
-                if (IsPlayer)
+                if (IsPlayer && _shieldDownSound.isReadyToPlay)
                 {
                     AudioSource.PlayClipAtPoint(_shieldDownSound, Camera.main.transform.position);
                 }
+
                 _shieldStrength = 0;
             }
             else
@@ -85,46 +144,30 @@ public class DamageController : MonoBehaviour
                 _shieldStrength -= laserStrength;
             }
 
-            if(!shieldTimerActive)
+            laserStrength = laserDiff;
+
+            if(_shieldStrength == 0)
             {
-                shieldTimer = ShieldRegenTime;
                 shieldTimerActive = true;
-                if (IsPlayer)
+                shieldTimer = ShieldRegenTime;
+                if (IsPlayer && _takingDamageSound.isReadyToPlay)
                 {
                     AudioSource.PlayClipAtPoint(_takingDamageSound, Camera.main.transform.position);
                 }
-            }
-
-            laserStrength -= _shieldStrength;
-        }
-
-        if (laserStrength > 0 && HullStrength > 0)
-        {
-            AudioSource.PlayClipAtPoint(_hullSound, Camera.main.transform.position);
-            laserStrength -= HullStrength;
-
-            if (HullStrength <= laserStrength)
-            {
-                //DEAD MAYN
-                HullStrength = 0;
-            }
-            else if (HullStrength <= 100)
-            {
-                if (IsPlayer)
+                if(!IsPlayer && _enemyShieldsDown.isReadyToPlay)
                 {
-                    AudioSource.PlayClipAtPoint(_hullBreachedSound, Camera.main.transform.position);
+                    AudioSource.PlayClipAtPoint(_enemyShieldsDown, Camera.main.transform.position);
                 }
             }
         }
-
-        DeathCheck();
-
     }
 
     private void DeathCheck()
     {
+        Debug.Log("Checking for death");
         if (HullStrength <= 0)
         {
+            Debug.Log("Checking for death");
             Destruct();
         }
     }
@@ -133,4 +176,6 @@ public class DamageController : MonoBehaviour
     {
         Destroy(transform.root.gameObject);
     }
+
+    public AudioClip _enemyShieldsRecharged { get; set; }
 }

@@ -82,7 +82,8 @@ public class EnemyBehaviourController : MonoBehaviour
             {
                 if(playerDist < shootDist)
                 {
-                    ctrl.HandleEnemyShoot();
+                    didShoot = true;
+                    ctrl.HandleShoot();
                 }
             }
 
@@ -101,7 +102,7 @@ public class EnemyBehaviourController : MonoBehaviour
 
         if (diffVector.magnitude > 1)
         {
-            //movement = (diffVector.normalized * speed);//without this it will run toward something and slow down when it gets close.    
+            movement = (diffVector.normalized * speed);//without this it will run toward something and slow down when it gets close.    
 
         }
         else

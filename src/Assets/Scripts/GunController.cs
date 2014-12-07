@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Threading;
 
 public class GunController : MonoBehaviour
 {
@@ -11,7 +12,15 @@ public class GunController : MonoBehaviour
 
     public bool IsPlayer = false;
 
+    public float shootCooldown = 0.25f;
+    public float laserDisplayCooldown = 0.01f;
+
     private AudioClip _laserSound;
+    private bool isShooting = false;
+    private float shootTimer = 0;
+
+    private bool laserDisplayActive = false;
+    private float laserDisplayTimer = 0;
 
     // Use this for initialization
     void Start()
@@ -29,57 +38,62 @@ public class GunController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
+        CheckLaserDisplay();
+        CheckIsShooting();
+
         if (IsPlayer)
         {
-            HandlePlayerShoot();
+            if (Input.GetButton("Fire1"))
+            {
+                HandleShoot();
+            }
         }
     }
 
-    public void HandleEnemyShoot()
+    private void CheckLaserDisplay()
     {
-        Debug.Log("Enemy shoot routine");
-        StopCoroutine("EnemyFireLaser");
-        StartCoroutine("EnemyFireLaser");
-    }
-
-    void HandlePlayerShoot()
-    {
-        if (Input.GetButtonDown("Fire1"))
+        if(laserDisplayActive && laserDisplayTimer > 0)
         {
-            StopCoroutine("PlayerFireLaser");
-            StartCoroutine("PlayerFireLaser");
+            laserDisplayTimer = Mathf.Clamp(laserDisplayTimer - Time.deltaTime, 0, laserDisplayCooldown);
+        }
+
+        if(laserDisplayActive && laserDisplayTimer <= 0)
+        {
+            laserDisplayActive = false;
+            lineRenderer.enabled = false;
         }
     }
 
-    IEnumerator EnemyFireLaser()
+    private void CheckIsShooting()
     {
-        lineRenderer.enabled = true;
-
-        for (int timeShot = 0; timeShot <= 10; timeShot++)
+        if (isShooting && shootTimer > 0)
         {
-            Debug.Log("Firing");
+            shootTimer = Mathf.Clamp(shootTimer - Time.deltaTime, 0, shootCooldown);
+        }
+
+        if (isShooting && shootTimer <= 0)
+        {
+            
+            isShooting = false;
+        }
+    }
+
+    public void HandleShoot()
+    {
+        if (!isShooting)
+        {
+            shootTimer = shootCooldown;
+            isShooting = true;
+
+            laserDisplayTimer = laserDisplayCooldown;
+            laserDisplayActive = true;
+
+            lineRenderer.enabled = true;
+
             FireLaser();
-
-            yield return null;
         }
-
-        lineRenderer.enabled = false;
-    }
-
-    IEnumerator PlayerFireLaser()
-    {
-        lineRenderer.enabled = true;
-
-        while(Input.GetButton("Fire1"))
-        {
-            FireLaser();
-
-            yield return null;
-        }
-
-        lineRenderer.enabled = false;
     }
 
     public void FireLaser()
@@ -108,7 +122,10 @@ public class GunController : MonoBehaviour
         lineRenderer.SetPosition(0, ray.origin);
         lineRenderer.SetPosition(1, endPoint);
 
-        AudioSource.PlayClipAtPoint(_laserSound, ray.origin);
+        if (_laserSound.isReadyToPlay)
+        {
+            AudioSource.PlayClipAtPoint(_laserSound, ray.origin);
+        }
     }
 }
 

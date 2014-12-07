@@ -59,7 +59,6 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400006}
-  - 95: {fileID: 9500000}
   - 54: {fileID: 5400000}
   - 135: {fileID: 13500000}
   - 65: {fileID: 6500000}
@@ -429,21 +428,6 @@ Behaviour:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100008}
   m_Enabled: 1
---- !u!95 &9500000
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100006}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 5707a37d8aa1f9e4da86c5c98fbffdc3, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 1
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
 --- !u!108 &10800000
 Light:
   m_ObjectHideFlags: 1
@@ -565,6 +549,8 @@ MonoBehaviour:
   LaserLength: 100
   Strength: 75
   IsPlayer: 1
+  shootCooldown: 1
+  laserDisplayCooldown: .00999999978
 --- !u!114 &11400006
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -579,6 +565,8 @@ MonoBehaviour:
   LaserLength: 100
   Strength: 75
   IsPlayer: 1
+  shootCooldown: 1
+  laserDisplayCooldown: .00999999978
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
