@@ -492,8 +492,8 @@ MonoBehaviour:
   waypoints: []
   currentPoint: 0
   state: patrol
-  speed: 5
-  chaseDist: 125
+  speed: 10
+  chaseDist: 500
   shootDist: 50
   shootingCooldown: 1
   gunControllerObjects:

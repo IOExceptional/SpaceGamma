@@ -1,11 +1,13 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EnemySpawnerController : MonoBehaviour
 {
-    public float SpawnTimer = 15f;
+    public float SpawnTimer = 2f;
+    public float InitialSpawnTimer = 0f;
 
     public GameObject objectToSpawn;
+
+    public Transform[] spawnPoints;
 
     private float timer = 0;
 
@@ -14,33 +16,36 @@ public class EnemySpawnerController : MonoBehaviour
     void Start()
     {
         _rand = new System.Random();
+        InvokeRepeating("SpawnEntity", InitialSpawnTimer, SpawnTimer);
     }
 
     void Update()
     {
-        if(timer > 0)
-        {
-            timer = Mathf.Clamp(timer - Time.deltaTime, 0, SpawnTimer);
-        }
-        else
-        {
-            SpawnEntity();
-            timer = SpawnTimer;
-        }
     }
 
     void SpawnEntity()
     {
-        GameObject obj = Instantiate(objectToSpawn, transform.position, new Quaternion()) as GameObject;
+        int spawnPointIndex = -1;
+        Transform spawnPoint = null;
 
-        EnemyBehaviourController controller = obj.GetComponent<EnemyBehaviourController>();
-
-
-        for(int i = 0; i < _rand.Next(3, 20); i++)
+        do
         {
-            Vector3 position = new Vector3(_rand.Next(-2000, 2000), _rand.Next(-2000, 2000), _rand.Next(-2000, 2000));
+            spawnPointIndex = Random.Range(0, spawnPoints.Length);
+            spawnPoint = spawnPoints[spawnPointIndex];
 
-            controller.AddWayPoint(position);
         }
+        while (spawnPointIndex < 0 && spawnPoint == null);
+
+        Instantiate(objectToSpawn, spawnPoint.position, spawnPoint.rotation);;
+
+        //EnemyBehaviourController controller = obj.GetComponent<EnemyBehaviourController>();
+
+
+        //for(int i = 0; i < _rand.Next(3, 20); i++)
+        //{
+        //    Vector3 position = new Vector3(_rand.Next(-2000, 2000), _rand.Next(-2000, 2000), _rand.Next(-2000, 2000));
+
+        //    controller.AddWayPoint(position);
+        //}
     }
 }

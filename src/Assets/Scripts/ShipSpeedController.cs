@@ -4,88 +4,52 @@ using System.Collections;
 [RequireComponent (typeof(Rigidbody))]
 public class ShipSpeedController : MonoBehaviour 
 {
-	public float Mass = 5.0f;
-
-	public float CurrentThrust = 0.0f;
-
-	public float ReverseThrustSetting = -5f;
-
-	public float ThrustSetting = 7.5f;
-
-	public float MaxThrust = 100;
-
-	public float SoftSpeedLimit = 300.0f;
-
     public float CurrentSpeed
     {
         get
         {
-            return rigidbody.velocity.magnitude;
+            return speed;
         }
     }
 
-	public float HardSpeedLimit = 400.0f;
-    public float MouseSensitivity = 1.0f;
-	 
+    //speed stuff
+    float speed;
+    public int cruiseSpeed;
+    float deltaSpeed;//(speed - cruisespeed)
+    public int minSpeed;
+    public int maxSpeed;
+    float accel, decel;
+
     void Start()
     {
-        rigidbody.mass = Mass;
     }
  
     void FixedUpdate()
     {
-		if(Input.GetButton(""))
-		{
-			CurrentThrust = ThrustSetting;
-		}
-		else if(Input.GetKey(KeyCode.S))
-		{
-			CurrentThrust = ReverseThrustSetting;
-		}
-		else
-		{
-			CurrentThrust = 0;
-		}
+        deltaSpeed = speed - cruiseSpeed;
 
-		SpeedLimit ();
+        decel = speed - minSpeed;
+        accel = maxSpeed - speed;
+
+        if (Input.GetKey(KeyCode.Joystick1Button1) || Input.GetKey(KeyCode.W))
+        {
+            speed += accel * Time.fixedDeltaTime;
+        }
+        else if (Input.GetKey(KeyCode.Joystick1Button0) || Input.GetKey(KeyCode.S))
+        {
+            speed -= decel * Time.fixedDeltaTime;
+        }
+        else if (Mathf.Abs(deltaSpeed) > .1f)
+        {
+            speed -= Mathf.Clamp(deltaSpeed * Mathf.Abs(deltaSpeed), -30, 100) * Time.fixedDeltaTime;
+        }
+
+
+        float sqrOffset = transform.GetChild(1).localPosition.sqrMagnitude;
+        Vector3 offsetDir = transform.GetChild(1).localPosition.normalized;
+
+        transform.Translate(-offsetDir * sqrOffset * 20 * Time.fixedDeltaTime);
+
+        transform.Translate((offsetDir * sqrOffset * 50 + transform.GetChild(1).forward * speed) * Time.fixedDeltaTime, Space.World);
     }
-
-	void SpeedLimit ()
-	{
-		float magnitude = rigidbody.velocity.magnitude;
-
-		float force = 0;
-
-		if (magnitude < SoftSpeedLimit) 
-        {
-			force = CurrentThrust;
-		}
-		else 
-        {
-			force = -CurrentThrust;
-		}
-		if (magnitude >= HardSpeedLimit) 
-        {
-			force = -CurrentThrust * 2;
-		}
-		//Positive Z pushes ship backwards, so we flip the force
-		rigidbody.AddRelativeForce (new Vector3 (0, 0, -force), ForceMode.Acceleration);
-	}
-
-	float AxisToFloat (string axisInput)
-	{
-		float output = 0;
-		if (Input.GetAxis (axisInput) < 0) 
-		{
-			output -= 2;
-		}
-		if (Input.GetAxis (axisInput) > 0) 
-		{
-			output += 2;
-		}
-
-		output = Mathf.Clamp(output, -10, 10);
-
-		return output;
-	}
 }

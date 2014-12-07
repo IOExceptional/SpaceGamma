@@ -68,12 +68,10 @@ public class GuiController : MonoBehaviour
             _targetText.text = target.name;
         }
 
-        Vector3 targetOverlayPosition = _camera.WorldToScreenPoint(target.transform.position);
+        Vector3 targetScreenPos = _camera.WorldToScreenPoint(target.transform.position);
+        targetScreenPos.z = target.renderer.isVisible ? 0 : -3000;
 
-        //Huh...
-        targetOverlayPosition.z = 0;
-
-        guiOverlayForTarget.transform.position = targetOverlayPosition;
+        guiOverlayForTarget.transform.position = targetScreenPos;
     }
 
     private void SetupTargetOverlay()
