@@ -12,9 +12,17 @@ public class ShipSpeedController : MonoBehaviour
 
 	public float ThrustSetting = 7.5f;
 
-	public float MaxThrust = 20;
+	public float MaxThrust = 100;
 
 	public float SoftSpeedLimit = 300.0f;
+
+    public float CurrentSpeed
+    {
+        get
+        {
+            return rigidbody.velocity.magnitude;
+        }
+    }
 
 	public float HardSpeedLimit = 400.0f;
     public float MouseSensitivity = 1.0f;
@@ -26,7 +34,7 @@ public class ShipSpeedController : MonoBehaviour
  
     void FixedUpdate()
     {
-		if(Input.GetKey(KeyCode.W))
+		if(Input.GetButton(""))
 		{
 			CurrentThrust = ThrustSetting;
 		}
@@ -48,13 +56,16 @@ public class ShipSpeedController : MonoBehaviour
 
 		float force = 0;
 
-		if (magnitude < SoftSpeedLimit) {
+		if (magnitude < SoftSpeedLimit) 
+        {
 			force = CurrentThrust;
 		}
-		else {
+		else 
+        {
 			force = -CurrentThrust;
 		}
-		if (magnitude >= HardSpeedLimit) {
+		if (magnitude >= HardSpeedLimit) 
+        {
 			force = -CurrentThrust * 2;
 		}
 		//Positive Z pushes ship backwards, so we flip the force

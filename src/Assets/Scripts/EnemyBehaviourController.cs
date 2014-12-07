@@ -2,9 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 
+using System.Linq;
+
 public class EnemyBehaviourController : MonoBehaviour
 {
-    public Transform[] waypoints;
+    public List<Vector3> waypoints;
     public int currentPoint = 0;
 
     public string state = "patrol";
@@ -28,6 +30,7 @@ public class EnemyBehaviourController : MonoBehaviour
         controller = GetComponent<CharacterController>();
 
         gunControllers = new List<GunController>();
+        waypoints = new List<Vector3>();
     
         foreach(GameObject obj in gunControllerObjects)
         {
@@ -60,9 +63,9 @@ public class EnemyBehaviourController : MonoBehaviour
 
         if (state == "patrol")
         {
-            if (currentPoint < waypoints.Length)
+            if (currentPoint < waypoints.Count)
             {
-                Mover(waypoints[currentPoint].position);
+                Mover(waypoints[currentPoint]);
             }
 
         }
@@ -107,9 +110,9 @@ public class EnemyBehaviourController : MonoBehaviour
         }
         else if(state == "patrol")
         {
-            if (waypoints.Length > 0)
+            if (waypoints.Any())
             {
-                currentPoint = (currentPoint + 1) % waypoints.Length;
+                currentPoint = (currentPoint + 1) % waypoints.Count;
             }
 
         }
@@ -117,5 +120,10 @@ public class EnemyBehaviourController : MonoBehaviour
 
         transform.LookAt(target);
 
+    }
+
+    internal void AddWayPoint(Vector3 trans)
+    {
+        waypoints.Add(trans);
     }
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class EnemySpawnerController : MonoBehaviour
 {
@@ -8,9 +9,11 @@ public class EnemySpawnerController : MonoBehaviour
 
     private float timer = 0;
 
+    private System.Random _rand;
+
     void Start()
     {
-
+        _rand = new System.Random();
     }
 
     void Update()
@@ -32,6 +35,12 @@ public class EnemySpawnerController : MonoBehaviour
 
         EnemyBehaviourController controller = obj.GetComponent<EnemyBehaviourController>();
 
-        //TODO: Add some waypoints in :)    
+
+        for(int i = 0; i < _rand.Next(3, 20); i++)
+        {
+            Vector3 position = new Vector3(_rand.Next(-2000, 2000), _rand.Next(-2000, 2000), _rand.Next(-2000, 2000));
+
+            controller.AddWayPoint(position);
+        }
     }
 }
