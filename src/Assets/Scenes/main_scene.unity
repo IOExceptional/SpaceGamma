@@ -19,7 +19,7 @@ RenderSettings:
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientLight: {r: .200000003, g: .200000003, b: .200000003, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 552b22b27f7b101409df298a36e7d03b, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 415e1b1474b0f6e4fadd88283415a74f, type: 2}
   m_HaloStrength: .5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -1204,7 +1204,7 @@ MonoBehaviour:
   state: patrol
   speed: 5
   chaseDist: 125
-  shootDist: 75
+  shootDist: 50
   shootingCooldown: 100
   gunControllerObjects: []
 --- !u!114 &1489105429
