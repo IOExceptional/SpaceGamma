@@ -14,12 +14,20 @@ public class DamageController : MonoBehaviour
 
     public bool IsPlayer = false;
 
-    private int _shieldStrength = 0;
+    private int _currentShieldStrength = 0;
 
     /// <summary>
     /// Measured in milliseconds?
     /// </summary>
     public int ShieldRegenTime = 1000;
+
+    public int CurrentShieldStrength
+    {
+        get
+        {
+            return _currentShieldStrength;
+        }
+    }
 
     private float shieldTimer;
     private bool shieldTimerActive;
@@ -39,7 +47,7 @@ public class DamageController : MonoBehaviour
         shieldTimer = 0;
         shieldTimerActive = false;
 
-        _shieldStrength = ShieldStrength;
+        _currentShieldStrength = ShieldStrength;
 
         LoadSounds();
     }
@@ -69,7 +77,7 @@ public class DamageController : MonoBehaviour
         if (shieldTimer <= 0 && shieldTimerActive)
         {
             shieldTimerActive = false;
-            _shieldStrength = ShieldStrength;
+            _currentShieldStrength = ShieldStrength;
 
             Debug.Log(string.Format("Shields recharged"));
 
@@ -89,7 +97,7 @@ public class DamageController : MonoBehaviour
     {
         int laserStrength = controller.Strength;
 
-        Debug.Log(string.Format("LS: {0}, SS: {1}, HS: {2}", laserStrength, _shieldStrength, HullStrength));
+        Debug.Log(string.Format("LS: {0}, SS: {1}, HS: {2}", laserStrength, _currentShieldStrength, HullStrength));
 
         HandleShield(hitPosition, ref laserStrength);
 
@@ -121,32 +129,32 @@ public class DamageController : MonoBehaviour
 
     private void HandleShield(Vector3 hitPosition, ref int laserStrength)
     {
-        if (!shieldTimerActive && _shieldStrength > 0)
+        if (!shieldTimerActive && _currentShieldStrength > 0)
         {
-            int laserDiff = Mathf.Clamp(laserStrength - _shieldStrength, 0, int.MaxValue);
+            int laserDiff = Mathf.Clamp(laserStrength - _currentShieldStrength, 0, int.MaxValue);
             
             if (_shieldSound.isReadyToPlay)
             {
                 AudioSource.PlayClipAtPoint(_shieldSound, hitPosition);
             }
 
-            if (_shieldStrength <= laserStrength)
+            if (_currentShieldStrength <= laserStrength)
             {
                 if (IsPlayer && _shieldDownSound.isReadyToPlay)
                 {
                     AudioSource.PlayClipAtPoint(_shieldDownSound, Camera.main.transform.position);
                 }
 
-                _shieldStrength = 0;
+                _currentShieldStrength = 0;
             }
             else
             {
-                _shieldStrength -= laserStrength;
+                _currentShieldStrength -= laserStrength;
             }
 
             laserStrength = laserDiff;
 
-            if(_shieldStrength == 0)
+            if(_currentShieldStrength == 0)
             {
                 shieldTimerActive = true;
                 shieldTimer = ShieldRegenTime;
