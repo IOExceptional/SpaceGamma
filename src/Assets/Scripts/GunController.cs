@@ -9,6 +9,8 @@ public class GunController : MonoBehaviour
 
     public int Strength = 50;
 
+    public bool IsPlayer = false;
+
     private AudioClip _laserSound;
 
     // Use this for initialization
@@ -29,11 +31,41 @@ public class GunController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetButtonDown("Fire1"))
+        if (IsPlayer)
+        {
+            HandlePlayerShoot();
+        }
+    }
+
+    public void HandleEnemyShoot()
+    {
+        Debug.Log("Enemy shoot routine");
+        StopCoroutine("EnemyFireLaser");
+        StartCoroutine("EnemyFireLaser");
+    }
+
+    void HandlePlayerShoot()
+    {
+        if (Input.GetButtonDown("Fire1"))
         {
             StopCoroutine("PlayerFireLaser");
             StartCoroutine("PlayerFireLaser");
         }
+    }
+
+    IEnumerator EnemyFireLaser()
+    {
+        lineRenderer.enabled = true;
+
+        for (int timeShot = 0; timeShot <= 10; timeShot++)
+        {
+            Debug.Log("Firing");
+            FireLaser();
+
+            yield return null;
+        }
+
+        lineRenderer.enabled = false;
     }
 
     IEnumerator PlayerFireLaser()
@@ -50,7 +82,7 @@ public class GunController : MonoBehaviour
         lineRenderer.enabled = false;
     }
 
-    void FireLaser()
+    public void FireLaser()
     {
         Ray ray = new Ray(transform.position, transform.forward);
 

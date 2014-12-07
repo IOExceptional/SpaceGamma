@@ -47,7 +47,7 @@ public class DamageController : MonoBehaviour
         _shieldSound = Resources.Load<AudioClip>("Sounds/Sounds/shield-noise");
         _hullSound = Resources.Load<AudioClip>("Sounds/Sounds/hull-noise");
         _takingDamageSound = Resources.Load<AudioClip>("Sounds/Voices/taking-damage");
-        _shieldDownSound = Resources.Load<AudioClip>("Sounds/Voices/shield-down");
+        _shieldDownSound = Resources.Load<AudioClip>("Sounds/Voices/shields-down");
         _hullBreachedSound = Resources.Load<AudioClip>("Sounds/Voices/hull-breached");
     }
 

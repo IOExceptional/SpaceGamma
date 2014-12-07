@@ -1,32 +1,53 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class EnemyBehaviourController : MonoBehaviour
 {
+    public Transform[] waypoints;
+    public int currentPoint = 0;
 
-    Transform[] waypoints;
-    int currentPoint = 0;
+    public string state = "patrol";
+    public float speed = 5;
+    public float chaseDist = 100;
+    public float shootDist = 50;
 
-    string state = "patrol";
-    float speed = 10;
-    float chaseDist = 15;
-    float gravity = 15;
+    public float shootingCooldown = 100;
+
+    public GameObject[] gunControllerObjects;
+
+    private List<GunController> gunControllers;
 
     private CharacterController controller;
     private Transform player;
-    private ParticleEmitter alert;
+    private float shootingCooldownTimer = 0;
 
     void Start()
     {
-        alert = GameObject.Find("alert").particleEmitter;
         player = GameObject.FindWithTag("Player").transform;
         controller = GetComponent<CharacterController>();
+
+        gunControllers = new List<GunController>();
+    
+        foreach(GameObject obj in gunControllerObjects)
+        {
+            GunController gunCtrl = obj.GetComponent<GunController>();
+
+            if(gunCtrl != null)
+            {
+                gunControllers.Add(gunCtrl);
+            }
+        }
     }
 
     void Update()
     {
+        if(shootingCooldownTimer > 0)
+        {
+            shootingCooldownTimer = Mathf.Clamp(shootingCooldownTimer - Time.deltaTime, 0, shootingCooldown);
+        }
 
-        var playerDist = Vector3.Distance(player.position, transform.position); //vector 3.dist finds distances between things
+        float playerDist = Vector3.Distance(player.position, transform.position); //vector 3.dist finds distances between things
 
         if (playerDist <= chaseDist)
         {
@@ -39,9 +60,6 @@ public class EnemyBehaviourController : MonoBehaviour
 
         if (state == "patrol")
         {
-            alert.emit = false;
-            renderer.material.color = Color.green;
-
             if (currentPoint < waypoints.Length)
             {
                 Mover(waypoints[currentPoint].position);
@@ -50,9 +68,28 @@ public class EnemyBehaviourController : MonoBehaviour
         }
         else if (state == "chase")
         {
-            alert.emit = true;
-            renderer.material.color = Color.red;
             Mover(player.position);
+            Shooter(playerDist);
+        }
+    }
+
+    private void Shooter(float playerDist)
+    {
+        bool didShoot = false;
+        if(shootingCooldownTimer == 0)
+        {
+            foreach(GunController ctrl in gunControllers)
+            {
+                if(playerDist < shootDist)
+                {
+                    ctrl.HandleEnemyShoot();
+                }
+            }
+
+            if(didShoot)
+            {
+                shootingCooldownTimer = shootingCooldown;
+            }
         }
     }
 
@@ -64,7 +101,7 @@ public class EnemyBehaviourController : MonoBehaviour
 
         if (diffVector.magnitude > 1)
         {
-            movement = (diffVector.normalized * speed);//without this it will run toward something and slow down when it gets close.    
+            //movement = (diffVector.normalized * speed);//without this it will run toward something and slow down when it gets close.    
 
         }
         else
