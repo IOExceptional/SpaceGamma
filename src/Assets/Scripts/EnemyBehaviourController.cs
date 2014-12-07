@@ -105,9 +105,12 @@ public class EnemyBehaviourController : MonoBehaviour
             movement = (diffVector.normalized * speed);//without this it will run toward something and slow down when it gets close.    
 
         }
-        else
+        else if(state == "patrol")
         {
-            currentPoint = (currentPoint + 1) % waypoints.Length;
+            if (waypoints.Length > 0)
+            {
+                currentPoint = (currentPoint + 1) % waypoints.Length;
+            }
 
         }
         controller.Move(movement * Time.deltaTime);

@@ -66,7 +66,6 @@ GameObject:
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400010}
   - 114: {fileID: 11400008}
-  - 114: {fileID: 11400012}
   m_Layer: 0
   m_Name: player-ship
   m_TagString: Player
@@ -511,9 +510,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Mass: 5
-  Thrust: 0
-  ReverseThrustSetting: -7.5
-  ThrustSetting: 5
+  CurrentThrust: 0
+  ReverseThrustSetting: -5
+  ThrustSetting: 7.5
   MaxThrust: 20
   SoftSpeedLimit: 300
   HardSpeedLimit: 400
@@ -580,6 +579,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TriggerObject: {fileID: 0}
+  requestCooldown: 2
 --- !u!114 &11400010
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -595,20 +595,6 @@ MonoBehaviour:
   ShieldStrength: 250
   IsPlayer: 1
   ShieldRegenTime: 5
---- !u!114 &11400012
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100006}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 543dab0a132eebd49b16c15cde740bbe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: {fileID: 11400010}
-  shieldMeter: {fileID: 0}
-  hullMeter: {fileID: 0}
 --- !u!120 &12000000
 LineRenderer:
   m_ObjectHideFlags: 1
