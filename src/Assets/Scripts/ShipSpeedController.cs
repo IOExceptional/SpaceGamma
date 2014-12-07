@@ -8,9 +8,9 @@ public class ShipSpeedController : MonoBehaviour
 
 	public float CurrentThrust = 0.0f;
 
-	public float ReverseThrustSetting = -7.5f;
+	public float ReverseThrustSetting = -5f;
 
-	public float ThrustSetting = 5.0f;
+	public float ThrustSetting = 7.5f;
 
 	public float MaxThrust = 20;
 

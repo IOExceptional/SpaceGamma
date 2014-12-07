@@ -6,4 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/menu-scene.unity
+  - enabled: 1
+    path: Assets/Scenes/death-scene.unity
+  - enabled: 1
     path: Assets/Scenes/main_scene.unity

@@ -40,6 +40,7 @@ public class DamageController : MonoBehaviour
     AudioClip _hullBreachedSound;
     AudioClip _shieldsRecharged;
     AudioClip _enemyShieldsDown;
+    AudioClip _enemyShieldsRecharged;
 
 
     void Start()
@@ -182,8 +183,15 @@ public class DamageController : MonoBehaviour
 
     private void Destruct()
     {
-        Destroy(transform.root.gameObject);
-    }
+        if (!IsPlayer)
+        {
+            Destroy(transform.root.gameObject);
+        }
+        else
+        {
+            //You died mate, sorry
+            Application.LoadLevel("death-scene");
+        }
 
-    public AudioClip _enemyShieldsRecharged { get; set; }
+    }
 }

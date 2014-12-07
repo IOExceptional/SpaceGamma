@@ -28,6 +28,10 @@ public class EnemySpawnerController : MonoBehaviour
 
     void SpawnEntity()
     {
-        Instantiate(objectToSpawn, transform.position, new Quaternion());
+        GameObject obj = Instantiate(objectToSpawn, transform.position, new Quaternion()) as GameObject;
+
+        EnemyBehaviourController controller = obj.GetComponent<EnemyBehaviourController>();
+
+        //TODO: Add some waypoints in :)    
     }
 }
