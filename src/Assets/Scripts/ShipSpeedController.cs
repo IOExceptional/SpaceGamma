@@ -6,7 +6,7 @@ public class ShipSpeedController : MonoBehaviour
 {
 	public float Mass = 5.0f;
 
-	public float Thrust = 0.0f;
+	public float CurrentThrust = 0.0f;
 
 	public float ReverseThrustSetting = -7.5f;
 
@@ -28,15 +28,15 @@ public class ShipSpeedController : MonoBehaviour
     {
 		if(Input.GetKey(KeyCode.W))
 		{
-			Thrust = ThrustSetting;
+			CurrentThrust = ThrustSetting;
 		}
 		else if(Input.GetKey(KeyCode.S))
 		{
-			Thrust = ReverseThrustSetting;
+			CurrentThrust = ReverseThrustSetting;
 		}
 		else
 		{
-			Thrust = 0;
+			CurrentThrust = 0;
 		}
 
 		SpeedLimit ();
@@ -49,13 +49,13 @@ public class ShipSpeedController : MonoBehaviour
 		float force = 0;
 
 		if (magnitude < SoftSpeedLimit) {
-			force = Thrust;
+			force = CurrentThrust;
 		}
 		else {
-			force = -Thrust;
+			force = -CurrentThrust;
 		}
 		if (magnitude >= HardSpeedLimit) {
-			force = -Thrust * 2;
+			force = -CurrentThrust * 2;
 		}
 		//Positive Z pushes ship backwards, so we flip the force
 		rigidbody.AddRelativeForce (new Vector3 (0, 0, -force), ForceMode.Acceleration);

@@ -48,6 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\DamageController.cs" />
      <Compile Include="Assets\Scripts\EnemyBehaviourController.cs" />
+     <Compile Include="Assets\Scripts\EnemySpawnerController.cs" />
      <Compile Include="Assets\Scripts\GameController.cs" />
      <Compile Include="Assets\Scripts\GuiController.cs" />
      <Compile Include="Assets\Scripts\GunController.cs" />
