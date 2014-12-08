@@ -9,13 +9,8 @@ public class EnemySpawnerController : MonoBehaviour
 
     public Transform[] spawnPoints;
 
-    private float timer = 0;
-
-    private System.Random _rand;
-
     void Start()
     {
-        _rand = new System.Random();
         InvokeRepeating("SpawnEntity", InitialSpawnTimer, SpawnTimer);
     }
 

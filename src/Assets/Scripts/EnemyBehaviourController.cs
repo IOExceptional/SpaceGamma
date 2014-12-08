@@ -119,11 +119,5 @@ public class EnemyBehaviourController : MonoBehaviour
         controller.Move(movement * Time.deltaTime);
 
         transform.LookAt(target);
-
-    }
-
-    internal void AddWayPoint(Vector3 trans)
-    {
-        waypoints.Add(trans);
     }
 }

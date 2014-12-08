@@ -35,7 +35,6 @@ public class DamageController : MonoBehaviour
     AudioClip _shieldSound;
     AudioClip _hullSound;
 
-    AudioClip _takingDamageSound;
     AudioClip _shieldDownSound;
     AudioClip _hullBreachedSound;
     AudioClip _shieldsRecharged;
@@ -61,7 +60,6 @@ public class DamageController : MonoBehaviour
         _enemyShieldsRecharged = Resources.Load<AudioClip>("Sounds/Voices/enemy-shields-recharged");
         if (IsPlayer)
         {
-            _takingDamageSound = Resources.Load<AudioClip>("Sounds/Voices/taking-damage");
             _shieldDownSound = Resources.Load<AudioClip>("Sounds/Voices/shields-down");
             _hullBreachedSound = Resources.Load<AudioClip>("Sounds/Voices/hull-breached");
             _shieldsRecharged = Resources.Load<AudioClip>("Sounds/Voices/shields-recharged");
@@ -159,10 +157,6 @@ public class DamageController : MonoBehaviour
             {
                 shieldTimerActive = true;
                 shieldTimer = ShieldRegenTime;
-                if (IsPlayer && _takingDamageSound.isReadyToPlay)
-                {
-                    AudioSource.PlayClipAtPoint(_takingDamageSound, Camera.main.transform.position);
-                }
                 if(!IsPlayer && _enemyShieldsDown.isReadyToPlay)
                 {
                     AudioSource.PlayClipAtPoint(_enemyShieldsDown, Camera.main.transform.position);
